@@ -53,44 +53,60 @@ class FileThemeNodeContentRenderer extends Component {
 
     // Construct the scaffold representing the structure of the tree
     const scaffold = [];
-    lowerSiblingCounts.forEach((lowerSiblingCount, i) => {
+
+    for (let i = 0; i < path.length - 1; i++) {
       scaffold.push(
         <div
-          key={`pre_${1 + i}`}
           style={{ width: scaffoldBlockPxWidth }}
-          className={styles.lineBlock}
+          className={styles.lineChildren}
         />
       );
 
-      if (treeIndex !== listIndex && i === swapDepth) {
-        // This row has been shifted, and is at the depth of
-        // the line pointing to the new destination
-        let highlightLineClass = '';
 
-        if (listIndex === swapFrom + swapLength - 1) {
-          // This block is on the bottom (target) line
-          // This block points at the target block (where the row will go when released)
-          highlightLineClass = styles.highlightBottomLeftCorner;
-        } else if (treeIndex === swapFrom) {
-          // This block is on the top (source) line
-          highlightLineClass = styles.highlightTopLeftCorner;
-        } else {
-          // This block is between the bottom and top
-          highlightLineClass = styles.highlightLineVertical;
-        }
+    }
 
-        scaffold.push(
-          <div
-            key={`highlight_${1 + i}`}
-            style={{
-              width: scaffoldBlockPxWidth,
-              left: scaffoldBlockPxWidth * i,
-            }}
-            className={`${styles.absoluteLineBlock} ${highlightLineClass}`}
-          />
-        );
-      }
-    });
+    scaffold.push(
+      <div
+        style={{
+          width: scaffoldBlockPxWidth,
+          left: scaffoldBlockPxWidth,
+        }}
+        className={styles.lineBlock}
+      />
+    );
+
+
+    let iconChar;
+
+    switch (node.classname) {
+      case 'compound':
+        iconChar = 'C';
+        break;
+      case 'study':
+        iconChar = 'S';
+        break;
+      case 'reporting-effort':
+        iconChar = 'R';
+        break;
+      case 'table':
+        iconChar = 'T';
+        break;
+      case 'listing':
+        iconChar = 'L';
+        break;
+      case 'graph':
+        iconChar = 'G';
+        break;
+      case 'column-layout':
+        iconChar = 'C';
+        break;
+      case 'footnote-group':
+        iconChar = 'F';
+        break;
+      default:
+        iconChar = '';
+        break;
+    }
 
     const nodeContent = (
       <div style={{ height: '100%' }} {...otherProps}>
@@ -114,6 +130,25 @@ class FileThemeNodeContentRenderer extends Component {
                 })
               }
             />
+          )}
+
+        {toggleChildrenVisibility &&
+          (!node.children ||
+          node.children.length === 0) && (
+          <div
+            style={{
+              left: (path.length - 1) * scaffoldBlockPxWidth,
+              position: 'absolute',
+              border: 'solid 1px black',
+              fontSize: 8,
+              textAlign: 'center',
+              marginRight: 10,
+              width: '12px',
+              height: '16px',
+              lineHeight: '16px',
+            }}>
+            {iconChar}
+          </div>
           )}
 
         <div
